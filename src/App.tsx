@@ -1,6 +1,6 @@
 import "./App.css";
 import {  useReducer, useState } from "react";
-import Atm from './assets/atm-svgrepo-com.svg'
+import   AtmIcon from './assets/atm-svgrepo-com.svg'
 
 
 type Action =
@@ -28,6 +28,9 @@ const initialState : Istate = {
 
 
 function reducer(state : Istate, action : Action) {
+
+  if(!state.isActive && action.type !== "OPEN_ACCAUNT") return state;
+
   switch (action.type) {
     case 'OPEN_ACCAUNT':
       return { ...state, isActive: true, balance: 500,  };
@@ -66,14 +69,20 @@ const App = () => {
   
   const value = Math.round(Number(e.target.value)); 
   
-  if (isNaN(value) || value <= 0) return; 
-  
-  if (value > balance) return; 
+    if (isNaN(value) || value <= 0) return; 
+    
+    if (value > balance) return; 
 
-  if (value > 0 && value % 10 === 0){
-    setWithdraw(value); 
-  }
+    if (value > 0 && value % 10 === 0){
+      setWithdraw(value); 
+    }
   
+  }
+
+  function handleClose(){
+    dispatch({type: 'CLOSE_ACCOUNT'})
+    setDeposit(0)
+    setWithdraw(0)
   }
 
   return (
@@ -83,9 +92,9 @@ const App = () => {
 
    <div className=" relative app container mx-auto border shadow-2xl rounded-2xl py-3 opacity-70 px-10  bg-gray-700">
 
-        <span className="absolute -bottom-[21%] right-0  sm:right-0 sm:-bottom-2 size-[200px] opacity-45">
-          <img src={Atm} alt="" />
-        </span>      
+        <span className="absolute -bottom-[21%] right-0  sm:right-0 sm:-bottom-2 size-[200px] opacity-45 ">
+          <img src={AtmIcon} alt={AtmIcon} />
+        </span>    
 
       <h1 className=" text-3xl md:text-6xl font-medium text-center mb-2 ">useReducer Bank Account</h1>
       <hr />
@@ -212,11 +221,11 @@ const App = () => {
           ${isActive && 
             "hover:shadow-2xl  shadow-black transform hover:scale-x-110 duration-300 font-medium bg-neutral-800"}
           `}
-         onClick={() => dispatch({type : "CLOSE_ACCOUNT", })} disabled={!isActive}>
+         onClick={handleClose} disabled={!isActive}>
           Close account
         </button>
         <br />
-        <span className="text-yellow-200"> You can't close account if you have loan or positive balance</span>
+        <span className="text-yellow-200"> You can't close account if you have loan or positive & negative balance</span>
       </p>
       </div>
       
